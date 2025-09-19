@@ -1,35 +1,21 @@
+'use client'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import Header from "@/components/layout/Header"
 import Link from "next/link"
+import { useState } from 'react'
 
 export default function CropAdvisoryDashboard() {
+  const [showAuthModal, setShowAuthModal] = useState(false)
+  const [showLanguageSelector, setShowLanguageSelector] = useState(false)
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-lg">🌱</span>
-              </div>
-              <div>
-                <h1 className="text-xl font-bold">KisanMitra</h1>
-                <p className="text-sm text-muted-foreground">Smart Crop Advisory</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Button variant="outline" size="sm">
-                <span className="mr-2">🔔</span>
-                Alerts
-              </Button>
-              <Button variant="outline" size="sm">
-                हिंदी
-              </Button>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header 
+        onLanguageSelect={() => setShowLanguageSelector(true)}
+        onAuthRequired={() => setShowAuthModal(true)}
+      />
 
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
