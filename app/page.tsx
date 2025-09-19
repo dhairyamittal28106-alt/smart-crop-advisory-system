@@ -19,8 +19,8 @@ export default function CropAdvisoryDashboard() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <div className="rounded-lg bg-muted/50 p-6 border">
-            <h2 className="text-3xl font-bold mb-2">Welcome, Farmer!</h2>
+          <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-emerald-900 dark:to-emerald-950 rounded-2xl p-8 border-0 shadow-sm">
+            <h2 className="text-3xl font-bold mb-2 text-primary">Welcome, Farmer!</h2>
             <p className="text-lg text-muted-foreground mb-4">
               Get personalized crop advice, weather updates, and market prices to make informed farming decisions.
             </p>
@@ -44,16 +44,16 @@ export default function CropAdvisoryDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {/* Crop Advisory */}
           <Link href="/advisory">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <Card className="card-supermoney cursor-pointer">
               <CardHeader>
-                <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mb-2">
-                  <span className="text-xl text-primary-foreground">💬</span>
+                <div className="icon-supermoney bg-gradient-to-br from-green-600 to-green-700 mb-2">
+                  <span className="text-xl">💬</span>
                 </div>
-                <CardTitle>Crop Advisory</CardTitle>
+                <CardTitle className="text-lg font-semibold">Crop Advisory</CardTitle>
                 <CardDescription>Get personalized recommendations for your crops</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button className="w-full">
+                <Button className="w-full bg-gradient-to-r from-green-600 to-green-700 text-white hover:from-green-700 hover:to-green-800 rounded-xl border-0 shadow-md hover:shadow-lg transition-all duration-200">
                   Start Advisory Chat
                   <span className="ml-2">→</span>
                 </Button>
@@ -63,16 +63,16 @@ export default function CropAdvisoryDashboard() {
 
           {/* Weather Updates */}
           <Link href="/weather">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <Card className="card-supermoney cursor-pointer">
               <CardHeader>
-                <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-2">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-2 shadow-md">
                   <span className="text-xl text-white">🌧️</span>
                 </div>
-                <CardTitle>Weather Alerts</CardTitle>
+                <CardTitle className="text-lg font-semibold">Weather Alerts</CardTitle>
                 <CardDescription>Real-time weather updates and forecasts</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full bg-transparent">
+                <Button variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-white dark:hover:bg-emerald-600 rounded-xl">
                   View Weather
                   <span className="ml-2">→</span>
                 </Button>
@@ -82,16 +82,16 @@ export default function CropAdvisoryDashboard() {
 
           {/* Market Prices */}
           <Link href="/market">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <Card className="card-supermoney cursor-pointer">
               <CardHeader>
-                <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-2">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mb-2 shadow-md">
                   <span className="text-xl text-white">📊</span>
                 </div>
-                <CardTitle>Market Prices</CardTitle>
+                <CardTitle className="text-lg font-semibold">Market Prices</CardTitle>
                 <CardDescription>Current market rates for crops in your area</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full bg-transparent">
+                <Button variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-white dark:hover:bg-emerald-600 rounded-xl">
                   Check Prices
                   <span className="ml-2">→</span>
                 </Button>
@@ -101,16 +101,16 @@ export default function CropAdvisoryDashboard() {
 
           {/* Pest Detection */}
           <Link href="/pest-detection">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <Card className="card-supermoney cursor-pointer">
               <CardHeader>
-                <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mb-2">
+                <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mb-2 shadow-md">
                   <span className="text-xl text-white">📷</span>
                 </div>
-                <CardTitle>Pest Detection</CardTitle>
+                <CardTitle className="text-lg font-semibold">Pest Detection</CardTitle>
                 <CardDescription>Upload crop photos to identify pests and diseases</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full bg-transparent">
+                <Button variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-white dark:hover:bg-emerald-600 rounded-xl">
                   Scan Crop
                   <span className="ml-2">→</span>
                 </Button>
@@ -120,16 +120,16 @@ export default function CropAdvisoryDashboard() {
 
           {/* Voice Assistant */}
           <Link href="/voice">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <Card className="card-supermoney cursor-pointer">
               <CardHeader>
-                <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mb-2">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-2 shadow-md">
                   <span className="text-xl text-white">🎤</span>
                 </div>
-                <CardTitle>Voice Assistant</CardTitle>
+                <CardTitle className="text-lg font-semibold">Voice Assistant</CardTitle>
                 <CardDescription>Ask questions in your local language using voice</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full bg-transparent">
+                <Button variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-white dark:hover:bg-emerald-600 rounded-xl">
                   <span className="mr-2">🎤</span>
                   Start Voice Chat
                 </Button>
@@ -139,16 +139,16 @@ export default function CropAdvisoryDashboard() {
 
           {/* Quick Tips */}
           <Link href="/quick-tips">
-            <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+            <Card className="card-supermoney cursor-pointer">
               <CardHeader>
-                <div className="w-12 h-12 bg-emerald-500 rounded-lg flex items-center justify-center mb-2">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mb-2 shadow-md">
                   <span className="text-xl text-white">🌿</span>
                 </div>
-                <CardTitle>Daily Tips</CardTitle>
+                <CardTitle className="text-lg font-semibold">Daily Tips</CardTitle>
                 <CardDescription>Seasonal farming tips and best practices</CardDescription>
               </CardHeader>
               <CardContent>
-                <Button variant="outline" className="w-full bg-transparent">
+                <Button variant="outline" className="w-full border-primary text-primary hover:bg-primary hover:text-white dark:hover:bg-emerald-600 rounded-xl">
                   View Tips
                   <span className="ml-2">→</span>
                 </Button>
@@ -157,16 +157,16 @@ export default function CropAdvisoryDashboard() {
           </Link>
         </div>
 
-        <Card>
+        <Card className="card-supermoney">
           <CardHeader>
-            <CardTitle>Recent Activity</CardTitle>
+            <CardTitle className="text-lg font-semibold">Recent Activity</CardTitle>
             <CardDescription>Your latest interactions and recommendations</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
-                  <span className="text-primary-foreground">💬</span>
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-muted/50">
+                <div className="icon-supermoney-sm bg-gradient-to-br from-green-600 to-green-700">
+                  <span>💬</span>
                 </div>
                 <div>
                   <p className="font-medium">Crop Advisory Session</p>
@@ -176,9 +176,9 @@ export default function CropAdvisoryDashboard() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <span className="text-white">🌧️</span>
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-muted/50">
+                <div className="icon-supermoney bg-gradient-to-br from-blue-500 to-blue-600">
+                  <span>🌧️</span>
                 </div>
                 <div>
                   <p className="font-medium">Weather Alert</p>
@@ -186,9 +186,9 @@ export default function CropAdvisoryDashboard() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <span className="text-white">📊</span>
+              <div className="flex items-start gap-3 p-3 rounded-xl bg-muted/50">
+                <div className="icon-supermoney bg-gradient-to-br from-emerald-500 to-emerald-600">
+                  <span>📊</span>
                 </div>
                 <div>
                   <p className="font-medium">Market Update</p>
