@@ -2,7 +2,6 @@ import { Suspense } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { AlertCircle } from "lucide-react"
 
 async function ErrorContent({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
   const params = await searchParams
@@ -14,7 +13,7 @@ async function ErrorContent({ searchParams }: { searchParams: Promise<{ error?: 
           <Card className="border-red-200">
             <CardHeader className="text-center">
               <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-                <AlertCircle className="h-6 w-6 text-red-600" />
+                <span className="text-2xl">⚠️</span>
               </div>
               <CardTitle className="text-2xl text-red-800">Authentication Error</CardTitle>
             </CardHeader>
