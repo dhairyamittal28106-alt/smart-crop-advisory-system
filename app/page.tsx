@@ -5,16 +5,48 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import Header from "@/components/layout/Header"
 import Link from "next/link"
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createClient } from "@/lib/supabase/client"
 
 export default function CropAdvisoryDashboard() {
-  const [showAuthModal, setShowAuthModal] = useState(false)
+  const [showStartupModal, setShowStartupModal] = useState(false)
   const [showLanguageSelector, setShowLanguageSelector] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    const checkAuthAndShowStartupModal = async () => {
+      const supabase = createClient()
+      
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        
+        // Show startup modal if user is not authenticated
+        if (!user) {
+          // Small delay to let the page load first
+          setTimeout(() => {
+            setShowStartupModal(true)
+          }, 1000)
+        }
+      } catch (error) {
+        console.error('Error checking user:', error)
+        // Show modal on error as well (user likely not authenticated)
+        setTimeout(() => {
+          setShowStartupModal(true)
+        }, 1000)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    checkAuthAndShowStartupModal()
+  }, [])
+
   return (
     <div className="min-h-screen bg-background">
       <Header 
         onLanguageSelect={() => setShowLanguageSelector(true)}
-        onAuthRequired={() => setShowAuthModal(true)}
+        showStartupModal={showStartupModal}
+        onStartupModalClose={() => setShowStartupModal(false)}
       />
 
       <main className="container mx-auto px-4 py-8">
