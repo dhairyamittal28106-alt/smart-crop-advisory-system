@@ -375,4 +375,3 @@ function generateFarmingAdvice(current: any, forecast: any[]): Array<{
 
   return advice;
 }
-
