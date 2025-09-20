@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -18,136 +18,51 @@ import {
   AlertTriangle,
   MapPin,
   RefreshCw,
+  Loader2,
 } from "lucide-react"
 import Link from "next/link"
+import { fetchWeatherData, WeatherData } from "@/lib/weather"
 
-interface WeatherData {
-  current: {
-    temperature: number
-    condition: string
-    humidity: number
-    windSpeed: number
-    visibility: number
-    pressure: number
-    uvIndex: number
-    feelsLike: number
-  }
-  forecast: Array<{
-    date: string
-    day: string
-    high: number
-    low: number
-    condition: string
-    precipitation: number
-    humidity: number
-  }>
-  alerts: Array<{
-    id: string
-    type: "warning" | "advisory" | "watch"
-    title: string
-    description: string
-    severity: "low" | "medium" | "high"
-    validUntil: string
-  }>
-  farmingAdvice: Array<{
-    activity: string
-    recommendation: string
-    priority: "low" | "medium" | "high"
-  }>
-}
 
-const mockWeatherData: WeatherData = {
+// Default weather data for loading state
+const defaultWeatherData: WeatherData = {
   current: {
-    temperature: 28,
-    condition: "Partly Cloudy",
-    humidity: 65,
-    windSpeed: 12,
-    visibility: 10,
-    pressure: 1013,
-    uvIndex: 7,
-    feelsLike: 31,
+    temperature: 0,
+    condition: "Loading...",
+    humidity: 0,
+    windSpeed: 0,
+    visibility: 0,
+    pressure: 0,
+    uvIndex: 0,
+    feelsLike: 0,
+    lastUpdated: new Date().toISOString(),
   },
-  forecast: [
-    { date: "2024-01-15", day: "Today", high: 30, low: 18, condition: "Sunny", precipitation: 0, humidity: 60 },
-    {
-      date: "2024-01-16",
-      day: "Tomorrow",
-      high: 32,
-      low: 20,
-      condition: "Partly Cloudy",
-      precipitation: 10,
-      humidity: 65,
-    },
-    { date: "2024-01-17", day: "Wednesday", high: 29, low: 19, condition: "Cloudy", precipitation: 40, humidity: 75 },
-    { date: "2024-01-18", day: "Thursday", high: 26, low: 17, condition: "Rain", precipitation: 80, humidity: 85 },
-    { date: "2024-01-19", day: "Friday", high: 24, low: 16, condition: "Heavy Rain", precipitation: 90, humidity: 90 },
-    {
-      date: "2024-01-20",
-      day: "Saturday",
-      high: 27,
-      low: 18,
-      condition: "Partly Cloudy",
-      precipitation: 20,
-      humidity: 70,
-    },
-    { date: "2024-01-21", day: "Sunday", high: 29, low: 19, condition: "Sunny", precipitation: 5, humidity: 65 },
-  ],
-  alerts: [
-    {
-      id: "1",
-      type: "warning",
-      title: "Heavy Rain Expected",
-      description:
-        "Heavy rainfall expected from Thursday to Friday. Prepare for potential flooding in low-lying areas.",
-      severity: "high",
-      validUntil: "2024-01-19T23:59:59Z",
-    },
-    {
-      id: "2",
-      type: "advisory",
-      title: "High UV Index",
-      description: "UV index will be high today. Limit outdoor activities during peak hours (11 AM - 3 PM).",
-      severity: "medium",
-      validUntil: "2024-01-15T18:00:00Z",
-    },
-  ],
-  farmingAdvice: [
-    {
-      activity: "Irrigation",
-      recommendation: "Reduce watering schedule due to expected rainfall on Thursday-Friday",
-      priority: "high",
-    },
-    {
-      activity: "Harvesting",
-      recommendation: "Complete harvesting of ready crops before Thursday's rain",
-      priority: "high",
-    },
-    {
-      activity: "Spraying",
-      recommendation: "Avoid pesticide application during windy conditions (>15 km/h)",
-      priority: "medium",
-    },
-    {
-      activity: "Field Work",
-      recommendation: "Plan field activities for early morning or evening to avoid high UV",
-      priority: "low",
-    },
-  ],
+  forecast: [],
+  alerts: [],
+  farmingAdvice: [],
+  location: {
+    name: "Punjab",
+    region: "Punjab",
+    country: "India",
+  },
 }
 
 const getWeatherIcon = (condition: string) => {
-  switch (condition.toLowerCase()) {
-    case "sunny":
-      return <Sun className="w-6 h-6 text-yellow-500" />
-    case "partly cloudy":
-      return <Cloud className="w-6 h-6 text-gray-500" />
-    case "cloudy":
-      return <Cloud className="w-6 h-6 text-gray-600" />
-    case "rain":
-    case "heavy rain":
-      return <CloudRain className="w-6 h-6 text-blue-500" />
-    default:
-      return <Sun className="w-6 h-6 text-yellow-500" />
+  const conditionLower = condition.toLowerCase()
+  if (conditionLower.includes("sunny") || conditionLower.includes("clear")) {
+    return <Sun className="w-6 h-6 text-yellow-500" />
+  } else if (conditionLower.includes("partly cloudy") || conditionLower.includes("partly")) {
+    return <Cloud className="w-6 h-6 text-gray-500" />
+  } else if (conditionLower.includes("cloudy") || conditionLower.includes("overcast")) {
+    return <Cloud className="w-6 h-6 text-gray-600" />
+  } else if (conditionLower.includes("rain") || conditionLower.includes("drizzle") || conditionLower.includes("shower")) {
+    return <CloudRain className="w-6 h-6 text-blue-500" />
+  } else if (conditionLower.includes("snow") || conditionLower.includes("blizzard")) {
+    return <CloudRain className="w-6 h-6 text-blue-300" />
+  } else if (conditionLower.includes("fog") || conditionLower.includes("mist")) {
+    return <Cloud className="w-6 h-6 text-gray-400" />
+  } else {
+    return <Sun className="w-6 h-6 text-yellow-500" />
   }
 }
 
@@ -165,18 +80,44 @@ const getSeverityColor = (severity: string) => {
 }
 
 export default function WeatherPage() {
-  const [weatherData, setWeatherData] = useState<WeatherData>(mockWeatherData)
-  const [isLoading, setIsLoading] = useState(false)
+  const [weatherData, setWeatherData] = useState<WeatherData>(defaultWeatherData)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState(new Date())
+  const refreshInterval = 10 * 60 * 1000 // 10 minutes in milliseconds
+
+  const loadWeatherData = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+      const data = await fetchWeatherData()
+      setWeatherData(data)
+      setLastUpdated(new Date())
+    } catch (err) {
+      console.error('Failed to load weather data:', err)
+      setError('Failed to load weather data. Please try again.')
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const refreshWeather = async () => {
-    setIsLoading(true)
-    // Simulate API call
-    setTimeout(() => {
-      setLastUpdated(new Date())
-      setIsLoading(false)
-    }, 1500)
+    await loadWeatherData()
   }
+
+  // Load weather data on component mount
+  useEffect(() => {
+    loadWeatherData()
+  }, [])
+
+  // Set up auto-refresh
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadWeatherData()
+    }, refreshInterval)
+
+    return () => clearInterval(interval)
+  }, [refreshInterval])
 
   return (
     <div className="min-h-screen bg-background">
@@ -198,13 +139,17 @@ export default function WeatherPage() {
                   <h1 className="font-semibold text-foreground">Weather & Alerts</h1>
                   <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <MapPin className="w-3 h-3" />
-                    <span>Punjab, India</span>
+                    <span>{weatherData.location.name}, {weatherData.location.country}</span>
                   </div>
                 </div>
               </div>
             </div>
             <Button variant="outline" size="sm" onClick={refreshWeather} disabled={isLoading}>
-              <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <RefreshCw className="w-4 h-4 mr-2" />
+              )}
               Refresh
             </Button>
           </div>
@@ -212,6 +157,30 @@ export default function WeatherPage() {
       </header>
 
       <div className="container mx-auto px-4 py-6">
+        {/* Error Display */}
+        {error && (
+          <div className="mb-6">
+            <Card className="border-red-200 bg-red-50">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 text-red-800">
+                  <AlertTriangle className="w-5 h-5" />
+                  <span className="font-medium">Error Loading Weather Data</span>
+                </div>
+                <p className="text-sm text-red-700 mt-1">{error}</p>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={refreshWeather}
+                  className="mt-2"
+                  disabled={isLoading}
+                >
+                  Try Again
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
         {/* Weather Alerts */}
         {weatherData.alerts.length > 0 && (
           <div className="mb-6">
@@ -256,71 +225,82 @@ export default function WeatherPage() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <CardTitle className="text-lg">Current Weather</CardTitle>
-              <div className="text-xs text-muted-foreground">Last updated: {lastUpdated.toLocaleTimeString()}</div>
+              <div className="text-xs text-muted-foreground">
+                {isLoading ? "Loading..." : `Last updated: ${new Date(weatherData.current.lastUpdated).toLocaleTimeString()}`}
+              </div>
             </div>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Main Weather Info */}
-              <div className="flex items-center gap-4">
-                {getWeatherIcon(weatherData.current.condition)}
-                <div>
-                  <div className="text-3xl font-bold text-foreground">{weatherData.current.temperature}°C</div>
-                  <div className="text-sm text-muted-foreground">{weatherData.current.condition}</div>
-                  <div className="text-xs text-muted-foreground">Feels like {weatherData.current.feelsLike}°C</div>
-                </div>
+            {isLoading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                <span className="ml-2 text-muted-foreground">Loading weather data...</span>
               </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Main Weather Info */}
+                  <div className="flex items-center gap-4">
+                    {getWeatherIcon(weatherData.current.condition)}
+                    <div>
+                      <div className="text-3xl font-bold text-foreground">{weatherData.current.temperature}°C</div>
+                      <div className="text-sm text-muted-foreground">{weatherData.current.condition}</div>
+                      <div className="text-xs text-muted-foreground">Feels like {weatherData.current.feelsLike}°C</div>
+                    </div>
+                  </div>
 
-              {/* Weather Details Grid */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex items-center gap-2">
-                  <Droplets className="w-4 h-4 text-blue-500" />
-                  <div>
-                    <div className="text-sm font-medium">{weatherData.current.humidity}%</div>
-                    <div className="text-xs text-muted-foreground">Humidity</div>
+                  {/* Weather Details Grid */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="flex items-center gap-2">
+                      <Droplets className="w-4 h-4 text-blue-500" />
+                      <div>
+                        <div className="text-sm font-medium">{weatherData.current.humidity}%</div>
+                        <div className="text-xs text-muted-foreground">Humidity</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Wind className="w-4 h-4 text-gray-500" />
+                      <div>
+                        <div className="text-sm font-medium">{weatherData.current.windSpeed} km/h</div>
+                        <div className="text-xs text-muted-foreground">Wind Speed</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Eye className="w-4 h-4 text-green-500" />
+                      <div>
+                        <div className="text-sm font-medium">{weatherData.current.visibility} km</div>
+                        <div className="text-xs text-muted-foreground">Visibility</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Gauge className="w-4 h-4 text-purple-500" />
+                      <div>
+                        <div className="text-sm font-medium">{weatherData.current.pressure} mb</div>
+                        <div className="text-xs text-muted-foreground">Pressure</div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Wind className="w-4 h-4 text-gray-500" />
-                  <div>
-                    <div className="text-sm font-medium">{weatherData.current.windSpeed} km/h</div>
-                    <div className="text-xs text-muted-foreground">Wind Speed</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Eye className="w-4 h-4 text-green-500" />
-                  <div>
-                    <div className="text-sm font-medium">{weatherData.current.visibility} km</div>
-                    <div className="text-xs text-muted-foreground">Visibility</div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Gauge className="w-4 h-4 text-purple-500" />
-                  <div>
-                    <div className="text-sm font-medium">{weatherData.current.pressure} mb</div>
-                    <div className="text-xs text-muted-foreground">Pressure</div>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            {/* UV Index */}
-            <div className="mt-4 p-3 bg-muted/50 rounded-lg">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium">UV Index</span>
-                <span className="text-sm font-bold">{weatherData.current.uvIndex}/10</span>
-              </div>
-              <Progress value={weatherData.current.uvIndex * 10} className="h-2" />
-              <p className="text-xs text-muted-foreground mt-1">
-                {weatherData.current.uvIndex >= 8
-                  ? "Very High - Avoid sun exposure"
-                  : weatherData.current.uvIndex >= 6
-                    ? "High - Use sun protection"
-                    : weatherData.current.uvIndex >= 3
-                      ? "Moderate - Some protection needed"
-                      : "Low - Minimal protection needed"}
-              </p>
-            </div>
+                {/* UV Index */}
+                <div className="mt-4 p-3 bg-muted/50 rounded-lg">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium">UV Index</span>
+                    <span className="text-sm font-bold">{weatherData.current.uvIndex}/10</span>
+                  </div>
+                  <Progress value={weatherData.current.uvIndex * 10} className="h-2" />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {weatherData.current.uvIndex >= 8
+                      ? "Very High - Avoid sun exposure"
+                      : weatherData.current.uvIndex >= 6
+                        ? "High - Use sun protection"
+                        : weatherData.current.uvIndex >= 3
+                          ? "Moderate - Some protection needed"
+                          : "Low - Minimal protection needed"}
+                  </p>
+                </div>
+              </>
+            )}
           </CardContent>
         </Card>
 
