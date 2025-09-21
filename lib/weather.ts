@@ -192,7 +192,7 @@ export async function fetchWeatherData(): Promise<WeatherData> {
     });
 
     const dailyForecast = Array.from(dailyForecastMap.entries())
-      .slice(0, 7)
+      .slice(0, 6)
       .map(([date, data]: any) => {
         const condition = data.conditions.reduce(
           (a: any, b: any) =>

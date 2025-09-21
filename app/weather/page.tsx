@@ -307,14 +307,14 @@ export default function WeatherPage() {
         {/* Tabs for Forecast and Farming Advice */}
         <Tabs defaultValue="forecast" className="space-y-4">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="forecast">7-Day Forecast</TabsTrigger>
+            <TabsTrigger value="forecast">6-Day Forecast</TabsTrigger>
             <TabsTrigger value="farming">Farming Advice</TabsTrigger>
           </TabsList>
 
           <TabsContent value="forecast">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">7-Day Weather Forecast</CardTitle>
+                <CardTitle className="text-lg">6-Day Weather Forecast</CardTitle>
                 <CardDescription>Plan your farming activities based on upcoming weather</CardDescription>
               </CardHeader>
               <CardContent>
