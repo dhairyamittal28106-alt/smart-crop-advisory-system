@@ -47,6 +47,7 @@ function generateFarmingAdvice(current: any, forecast: any[]): Array<{
   const advice: Array<{ activity: string; recommendation: string; priority: "low" | "medium" | "high" }> = []
 
   // UV index check
+  // OpenWeatherMap's free plan doesn't provide a UV index, so we'll use a dummy value
   if (current.uvi >= 8) {
     advice.push({
       activity: "Field Work",
@@ -71,11 +72,12 @@ function generateFarmingAdvice(current: any, forecast: any[]): Array<{
   }
 
   // Rain check in next 3 days
-  const rainDays = forecast.slice(0, 3).filter(day => day.pop > 0.5)
-  if (rainDays.length > 0) {
+  // We'll check the 3-hour forecast for rain
+  const rainHours = forecast.slice(0, 24).filter(item => item.weather[0].main.toLowerCase().includes('rain'));
+  if (rainHours.length > 0) {
     advice.push({
       activity: "Irrigation",
-      recommendation: `Reduce watering schedule - ${rainDays.length} day(s) of rain expected`,
+      recommendation: `Reduce watering schedule - rain expected in the next few hours`,
       priority: "high",
     })
   }
@@ -128,67 +130,102 @@ export async function fetchWeatherData(): Promise<WeatherData> {
     longitude = position.coords.longitude;
   } catch (err) {
     console.error("Geolocation failed, using default location:", err);
-    // Fallback coordinates for Punjab, India
+    // Fallback coordinates for Chandigarh
     latitude = 30.7333;
     longitude = 76.7794;
   }
 
   try {
-    // API call 1: Get detailed weather and forecast
-    const weatherRes = await fetch(
-      `https://api.openweathermap.org/data/2.5/onecall?lat=${latitude}&lon=${longitude}&units=metric&exclude=minutely,hourly&appid=${apiKey}`
+    // API Call 1: Current Weather Data
+    const currentWeatherRes = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`
     );
-    if (!weatherRes.ok) throw new Error("Failed to fetch weather data from One Call API");
-    const weatherData = await weatherRes.json();
+    if (!currentWeatherRes.ok) throw new Error("Failed to fetch current weather data.");
+    const currentWeatherData = await currentWeatherRes.json();
 
-    // API call 2: Reverse Geocoding to get location name
+    // API Call 2: 5-Day / 3-Hour Forecast Data
+    const forecastRes = await fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=metric&appid=${apiKey}`
+    );
+    if (!forecastRes.ok) throw new Error("Failed to fetch forecast data.");
+    const forecastData = await forecastRes.json();
+
+    // API Call 3: Reverse Geocoding to get location name
     const geoRes = await fetch(
       `http://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${apiKey}`
     );
-    if (!geoRes.ok) throw new Error("Failed to fetch location data from Geocoding API");
+    if (!geoRes.ok) throw new Error("Failed to fetch location data.");
     const geoData = await geoRes.json();
+
     const locationName = geoData[0]?.name || "Your Location";
     const locationRegion = geoData[0]?.state || "";
     const locationCountry = geoData[0]?.country || "";
 
+    // Process the 5-day/3-hour forecast into a daily forecast
+    const dailyForecastMap = new Map();
+    forecastData.list.forEach((item: any) => {
+      const date = new Date(item.dt * 1000).toDateString();
+      if (!dailyForecastMap.has(date)) {
+        dailyForecastMap.set(date, {
+          high: -Infinity,
+          low: Infinity,
+          conditions: [],
+          humidity: [],
+          precipitation: 0,
+        });
+      }
+      const dayData = dailyForecastMap.get(date);
+      dayData.high = Math.max(dayData.high, item.main.temp_max);
+      dayData.low = Math.min(dayData.low, item.main.temp_min);
+      dayData.conditions.push(item.weather[0].description);
+      dayData.humidity.push(item.main.humidity);
+      if (item.rain) {
+        dayData.precipitation += item.rain['3h'];
+      }
+    });
+
+    const dailyForecast = Array.from(dailyForecastMap.entries()).slice(0, 7).map(([date, data]: any) => {
+      const condition = data.conditions.reduce((a: any, b: any) => data.conditions.filter((v: any) => v === a).length >= data.conditions.filter((v: any) => v === b).length ? a : b);
+      const avgHumidity = Math.round(data.humidity.reduce((a: any, b: any) => a + b, 0) / data.humidity.length);
+      return {
+        day: new Date(date).toLocaleDateString("en-US", { weekday: "short" }),
+        condition: condition,
+        high: Math.round(data.high),
+        low: Math.round(data.low),
+        precipitation: Math.round(data.precipitation * 100),
+        humidity: avgHumidity,
+      };
+    });
+
+    // Dummy UV index since it's not available on the free plan
+    const uvIndex = 5;
+
     return {
       current: {
-        temperature: Math.round(weatherData.current.temp),
-        condition: weatherData.current.weather[0].description,
-        humidity: weatherData.current.humidity,
-        windSpeed: weatherData.current.wind_speed,
-        visibility: weatherData.current.visibility ? weatherData.current.visibility / 1000 : 10,
-        pressure: weatherData.current.pressure,
-        uvIndex: weatherData.current.uvi,
-        feelsLike: weatherData.current.feels_like,
+        temperature: Math.round(currentWeatherData.main.temp),
+        condition: currentWeatherData.weather[0].description,
+        humidity: currentWeatherData.main.humidity,
+        windSpeed: currentWeatherData.wind.speed,
+        visibility: currentWeatherData.visibility ? currentWeatherData.visibility / 1000 : 10,
+        pressure: currentWeatherData.main.pressure,
+        uvIndex: uvIndex,
+        feelsLike: currentWeatherData.main.feels_like,
         lastUpdated: new Date().toISOString(),
       },
-      forecast: weatherData.daily.slice(0, 7).map((day: any) => ({
-        day: new Date(day.dt * 1000).toLocaleDateString("en-US", { weekday: "short" }),
-        condition: day.weather[0].description,
-        high: Math.round(day.temp.max),
-        low: Math.round(day.temp.min),
-        precipitation: day.pop ? Math.round(day.pop * 100) : 0,
-        humidity: day.humidity,
-      })),
-      alerts:
-        weatherData.alerts?.map((alert: any, index: number) => ({
-          id: String(index),
-          type: alert.event || "Weather Alert",
-          title: alert.event || "Alert",
-          description: alert.description,
-          severity: "high",
-          validUntil: new Date(alert.end * 1000).toISOString(),
-        })) || [],
-      farmingAdvice: generateFarmingAdvice(weatherData.current, weatherData.daily),
+      forecast: dailyForecast,
+      alerts: [], // Alerts are not available on the free plan
+      farmingAdvice: generateFarmingAdvice(
+        { ...currentWeatherData.main, uvi: uvIndex, wind_speed: currentWeatherData.wind.speed }, 
+        forecastData.list
+      ),
       location: {
         name: locationName,
         region: locationRegion,
         country: locationCountry,
       },
-    }
+    };
   } catch (err) {
     console.error("Error fetching weather data:", err);
-    throw new Error(`Failed to load weather data: ${err instanceof Error ? err.message : String(err)}`);
+    throw new Error(`Failed to load weather data. Please try again.`);
   }
 }
