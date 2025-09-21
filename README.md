@@ -52,9 +52,9 @@ Continue building your app on:
 
 The weather functionality uses WeatherAPI.com for real-time data. The API key is configured in the environment variables:
 
-```bash
+\`\`\`bash
 NEXT_PUBLIC_WEATHER_API_KEY=your_api_key_here
-```
+\`\`\`
 
 The system automatically fetches:
 - Current weather conditions
