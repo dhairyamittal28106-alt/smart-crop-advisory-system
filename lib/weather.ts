@@ -83,21 +83,10 @@ export async function fetchWeatherData(): Promise<WeatherData> {
         type: alert.event || "Weather Alert",
         title: alert.event || "Alert",
         description: alert.description,
-        severity: "high", // You can map based on alert event
+        severity: "high", // simple mapping for now
         validUntil: new Date(alert.end * 1000).toISOString(),
       })) || [],
-    farmingAdvice: [
-      {
-        activity: "Irrigation",
-        recommendation: data.current.uvi > 7 ? "Avoid irrigation during peak sunlight" : "Safe to irrigate crops",
-        priority: data.current.uvi > 7 ? "high" : "low",
-      },
-      {
-        activity: "Pesticide Spray",
-        recommendation: data.daily[0].pop > 0.5 ? "Avoid spraying due to rain chances" : "Good day for spraying",
-        priority: data.daily[0].pop > 0.5 ? "high" : "medium",
-      },
-    ],
+    farmingAdvice: generateFarmingAdvice(data.current, data.daily),
     location: {
       name: "Your Location",
       region: "",
@@ -105,99 +94,78 @@ export async function fetchWeatherData(): Promise<WeatherData> {
     },
   }
 }
-<<<<<<< HEAD
-=======
 
-// Generate farming advice based on weather conditions
+// ✅ Combined helper for farming advice
 function generateFarmingAdvice(current: any, forecast: any[]): Array<{
-  activity: string;
-  recommendation: string;
-  priority: "low" | "medium" | "high";
+  activity: string
+  recommendation: string
+  priority: "low" | "medium" | "high"
 }> {
-  const advice: Array<{
-    activity: string;
-    recommendation: string;
-    priority: "low" | "medium" | "high";
-  }> = [];
+  const advice: Array<{ activity: string; recommendation: string; priority: "low" | "medium" | "high" }> = []
 
-  // Check for rain in the next few days
-  const rainDays = forecast.slice(0, 3).filter(day => day.day.daily_chance_of_rain > 50);
-  if (rainDays.length > 0) {
-    advice.push({
-      activity: "Irrigation",
-      recommendation: `Reduce watering schedule - ${rainDays.length} day(s) of rain expected with ${Math.max(...rainDays.map(d => d.day.daily_chance_of_rain))}% chance`,
-      priority: "high",
-    });
-  }
-
-  // Check for high wind conditions
-  if (current.wind_kph > 20) {
-    advice.push({
-      activity: "Spraying",
-      recommendation: "Avoid pesticide application - wind speed is too high for safe spraying",
-      priority: "high",
-    });
-  }
-
-  // Check UV index
-  if (current.uv >= 8) {
+  // UV index check
+  if (current.uvi >= 8) {
     advice.push({
       activity: "Field Work",
       recommendation: "Limit outdoor activities during peak hours (11 AM - 3 PM) - very high UV index",
       priority: "medium",
-    });
-  } else if (current.uv >= 6) {
+    })
+  } else if (current.uvi >= 6) {
     advice.push({
       activity: "Field Work",
       recommendation: "Use sun protection during outdoor activities - high UV index",
       priority: "low",
-    });
+    })
   }
 
-  // Check for temperature extremes
-  if (current.temp_c > 35) {
+  // Wind check
+  if (current.wind_speed > 20) {
     advice.push({
-      activity: "Crop Protection",
-      recommendation: "Consider shade protection for sensitive crops - extreme heat conditions",
+      activity: "Spraying",
+      recommendation: "Avoid pesticide application - wind speed is too high for safe spraying",
       priority: "high",
-    });
-  } else if (current.temp_c < 5) {
-    advice.push({
-      activity: "Crop Protection",
-      recommendation: "Protect crops from frost damage - low temperature warning",
-      priority: "high",
-    });
+    })
   }
 
-  // Check humidity levels
+  // Rain check in next 3 days
+  const rainDays = forecast.slice(0, 3).filter(day => day.pop > 0.5)
+  if (rainDays.length > 0) {
+    advice.push({
+      activity: "Irrigation",
+      recommendation: `Reduce watering schedule - ${rainDays.length} day(s) of rain expected`,
+      priority: "high",
+    })
+  }
+
+  // Temperature extremes
+  if (current.temp > 35) {
+    advice.push({
+      activity: "Crop Protection",
+      recommendation: "Provide shade protection for sensitive crops - extreme heat",
+      priority: "high",
+    })
+  } else if (current.temp < 5) {
+    advice.push({
+      activity: "Crop Protection",
+      recommendation: "Protect crops from frost damage - very low temperature",
+      priority: "high",
+    })
+  }
+
+  // Humidity
   if (current.humidity > 80) {
     advice.push({
       activity: "Disease Prevention",
-      recommendation: "Monitor for fungal diseases - high humidity conditions",
+      recommendation: "Monitor for fungal diseases - high humidity",
       priority: "medium",
-    });
+    })
   } else if (current.humidity < 30) {
     advice.push({
       activity: "Irrigation",
-      recommendation: "Increase watering frequency - low humidity conditions",
+      recommendation: "Increase watering frequency - very dry conditions",
       priority: "medium",
-    });
+    })
   }
 
-  // Check for upcoming harvest conditions
-  const harvestDays = forecast.slice(0, 5).filter(day => 
-    day.day.daily_chance_of_rain < 30 && 
-    day.day.maxtemp_c < 35 && 
-    day.day.maxwind_kph < 25
-  );
-  if (harvestDays.length >= 3) {
-    advice.push({
-      activity: "Harvesting",
-      recommendation: "Good conditions for harvesting in the next few days",
-      priority: "low",
-    });
-  }
-
-  return advice;
+  return advice
 }
->>>>>>> 89c72d78388868337433b2abc47355f59b1726bc
