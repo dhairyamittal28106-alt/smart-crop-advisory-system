@@ -39,6 +39,7 @@ type AuthMode = 'login' | 'signup' | 'verify-email' | 'verify-phone' | 'complete
 type ContactMethod = 'email' | 'phone'
 
 interface AuthModalProps {
+  // Now, we use the `isOpen` prop to control the modal externally
   isOpen: boolean
   onClose: () => void
   onSuccess?: () => void
@@ -53,8 +54,8 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
   const [success, setSuccess] = useState<string | null>(null)
   const router = useRouter()
   
-  // Use a simple boolean state to control the modal's internal visibility
-  const [showModal, setShowModal] = useState(false);
+  // No longer needed since we are using the `isOpen` prop from the parent
+  // const [showModal, setShowModal] = useState(false);
 
   // Form fields
   const [email, setEmail] = useState('')
@@ -64,17 +65,28 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
   const [location, setLocation] = useState('')
   const [farmSize, setFarmSize] = useState('')
 
-  // This effect runs once when the component is mounted on the client side
+  // This effect handles the initial pop-up on page load.
   useEffect(() => {
-    // Ensure this code only runs in a browser environment
+    // Check if the code is running in the browser
     if (typeof window !== 'undefined') {
-      const popupShown = localStorage.getItem('loginPopupShown');
-      if (!popupShown) {
-        setShowModal(true);
-        localStorage.setItem('loginPopupShown', 'true');
-      }
+        const supabase = createClient();
+        const checkInitialPopup = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            const hasPopupBeenShown = localStorage.getItem('loginPopupShown');
+            
+            // Only show the modal once if the user is not logged in and the flag is not set
+            if (!user && !hasPopupBeenShown) {
+                onClose(); // Ensure it's closed first
+                localStorage.setItem('loginPopupShown', 'true');
+            }
+        };
+
+        checkInitialPopup();
     }
-  }, []);
+}, [onClose]);
+
+// No change in the rest of the code as it handles form logic
+// and Supabase authentication.
 
   const getContact = () => contactMethod === 'email' ? email : phone
 
@@ -159,7 +171,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
         setSuccess('Successfully signed in!')
         setTimeout(() => {
           onSuccess?.()
-          setShowModal(false); 
+          onClose();
           router.refresh()
         }, 1000)
       }
@@ -200,7 +212,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
       setSuccess('Profile completed successfully!')
       setTimeout(() => {
         onSuccess?.()
-        setShowModal(false);
+        onClose();
         router.refresh()
       }, 1000)
     } catch (error: any) {
@@ -464,14 +476,8 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
     }
   }
   
-  // Custom close function for the dialog
-  const handleClose = () => {
-    setShowModal(false);
-    onClose();
-  };
-
   return (
-    <Dialog open={showModal} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
