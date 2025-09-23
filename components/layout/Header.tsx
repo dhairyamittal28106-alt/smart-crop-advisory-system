@@ -134,7 +134,7 @@ export default function Header({ onLanguageSelect, showStartupModal = false, onS
                 <span className="text-lg text-primary-foreground">🌱</span>
               </div>
               <div>
-                <h1 className="text-xl font-bold">KisanMitra</h1>
+                <h1 className="text-xl font-bold">KisanMitraa</h1>
                 <p className="text-sm text-muted-foreground">Smart Crop Advisory</p>
               </div>
             </div>

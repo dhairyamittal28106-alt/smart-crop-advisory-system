@@ -441,8 +441,8 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
 
   const getTitle = () => {
     switch (mode) {
-      case 'login': return 'Welcome to KisanMitra'
-      case 'signup': return 'Join KisanMitra Family'
+      case 'login': return 'Welcome to KisanMitraa'
+      case 'signup': return 'Join KisanMitraa Family'
       case 'verify-email':
       case 'verify-phone': 
         return 'Verify your account'
@@ -471,7 +471,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
             <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
               <Leaf className="h-6 w-6 text-white" />
             </div>
-            <span className="text-xl font-bold">KisanMitra</span>
+            <span className="text-xl font-bold">KisanMitraa</span>
           </div>
           <DialogTitle>{getTitle()}</DialogTitle>
           <DialogDescription>{getDescription()}</DialogDescription>
