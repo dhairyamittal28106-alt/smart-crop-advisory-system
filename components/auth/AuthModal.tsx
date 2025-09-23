@@ -19,7 +19,6 @@ import {
   SelectValue 
 } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { createClient } from '@/lib/supabase/client'
 import { Leaf, Phone, Mail, Globe, CheckCircle, ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -53,6 +52,9 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const router = useRouter()
+  
+  // Use a simple boolean state to control the modal's internal visibility
+  const [showModal, setShowModal] = useState(false);
 
   // Form fields
   const [email, setEmail] = useState('')
@@ -62,14 +64,17 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
   const [location, setLocation] = useState('')
   const [farmSize, setFarmSize] = useState('')
 
+  // This effect runs once when the component is mounted on the client side
   useEffect(() => {
-    if (isOpen) {
-      setMode('login')
-      setError(null)
-      setSuccess(null)
-      setOtp('')
+    // Ensure this code only runs in a browser environment
+    if (typeof window !== 'undefined') {
+      const popupShown = localStorage.getItem('loginPopupShown');
+      if (!popupShown) {
+        setShowModal(true);
+        localStorage.setItem('loginPopupShown', 'true');
+      }
     }
-  }, [isOpen])
+  }, []);
 
   const getContact = () => contactMethod === 'email' ? email : phone
 
@@ -96,7 +101,6 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
         setMode(`verify-${contactMethod}` as AuthMode)
         setSuccess(`OTP sent to ${contact}`)
       } else {
-        // Phone OTP
         const { error } = await supabase.auth.signInWithOtp({
           phone: contact,
           options: {
@@ -134,7 +138,6 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
       if (error) throw error
 
       if (data.user) {
-        // Check if this is a new user (needs profile completion) - for both email and phone
         const { data: profile } = await supabase
           .from('profiles')
           .select('full_name')
@@ -146,7 +149,6 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
           return
         }
 
-        // Update language preference
         await supabase
           .from('profiles')
           .upsert({ 
@@ -157,7 +159,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
         setSuccess('Successfully signed in!')
         setTimeout(() => {
           onSuccess?.()
-          onClose()
+          setShowModal(false); 
           router.refresh()
         }, 1000)
       }
@@ -198,7 +200,7 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
       setSuccess('Profile completed successfully!')
       setTimeout(() => {
         onSuccess?.()
-        onClose()
+        setShowModal(false);
         router.refresh()
       }, 1000)
     } catch (error: any) {
@@ -210,7 +212,6 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
 
   const renderLoginSignup = () => (
     <div className="space-y-6">
-      {/* Language Selection */}
       <div className="space-y-2">
         <Label className="flex items-center gap-2">
           <Globe className="h-4 w-4" />
@@ -462,9 +463,15 @@ export default function AuthModal({ isOpen, onClose, onSuccess }: AuthModalProps
       default: return ''
     }
   }
+  
+  // Custom close function for the dialog
+  const handleClose = () => {
+    setShowModal(false);
+    onClose();
+  };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={showModal} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader className="text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
