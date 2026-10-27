@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  /* Reverted to original color scheme */
+   
   --background: #ffffff;
   --foreground: #0a0a0a;
   --card: #ffffff;
@@ -126,7 +126,7 @@
 }
 
 @layer components {
-  /* Enhanced card styling */
+   
   .card-supermoney {
     @apply bg-white/80 dark:bg-white/10 border-0 shadow-sm dark:shadow-white/5 rounded-2xl backdrop-blur-sm;
     transition: all 0.2s ease-in-out;
@@ -137,7 +137,7 @@
     transform: translateY(-2px);
   }
   
-  /* Standardized icon styling */
+   
   .icon-supermoney {
     @apply w-12 h-12 rounded-xl shadow-md flex items-center justify-center flex-shrink-0 text-white;
   }
@@ -146,7 +146,7 @@
     @apply w-10 h-10 rounded-xl shadow-md flex items-center justify-center flex-shrink-0 text-white;
   }
   
-  /* Glass morphism effect */
+   
   .glass-effect {
     backdrop-filter: blur(16px) saturate(200%);
     background: rgba(255, 255, 255, 0.75);

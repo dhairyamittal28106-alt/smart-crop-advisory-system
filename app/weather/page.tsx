@@ -24,7 +24,7 @@ import Link from "next/link"
 import { fetchWeatherData, WeatherData } from "@/lib/weather"
 
 
-// Default weather data for loading state
+
 const defaultWeatherData: WeatherData = {
   current: {
     temperature: 0,
@@ -84,7 +84,7 @@ export default function WeatherPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [lastUpdated, setLastUpdated] = useState(new Date())
-  const refreshInterval = 10 * 60 * 1000 // 10 minutes in milliseconds
+  const refreshInterval = 10 * 60 * 1000 
 
   const loadWeatherData = async () => {
     try {
@@ -105,12 +105,12 @@ export default function WeatherPage() {
     await loadWeatherData()
   }
 
-  // Load weather data on component mount
+  
   useEffect(() => {
     loadWeatherData()
   }, [])
 
-  // Set up auto-refresh
+  
   useEffect(() => {
     const interval = setInterval(() => {
       loadWeatherData()
@@ -121,7 +121,7 @@ export default function WeatherPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+       
       <header className="border-b bg-card sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -157,7 +157,7 @@ export default function WeatherPage() {
       </header>
 
       <div className="container mx-auto px-4 py-6">
-        {/* Error Display */}
+         
         {error && (
           <div className="mb-6">
             <Card className="border-red-200 bg-red-50">
@@ -181,7 +181,7 @@ export default function WeatherPage() {
           </div>
         )}
 
-        {/* Weather Alerts */}
+         
         {weatherData.alerts.length > 0 && (
           <div className="mb-6">
             <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
@@ -220,7 +220,7 @@ export default function WeatherPage() {
           </div>
         )}
 
-        {/* Current Weather */}
+         
         <Card className="mb-6">
           <CardHeader>
             <div className="flex items-center justify-between">
@@ -239,7 +239,7 @@ export default function WeatherPage() {
             ) : (
               <>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Main Weather Info */}
+                   
                   <div className="flex items-center gap-4">
                     {getWeatherIcon(weatherData.current.condition)}
                     <div>
@@ -249,7 +249,7 @@ export default function WeatherPage() {
                     </div>
                   </div>
 
-                  {/* Weather Details Grid */}
+                   
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex items-center gap-2">
                       <Droplets className="w-4 h-4 text-blue-500" />
@@ -282,7 +282,7 @@ export default function WeatherPage() {
                   </div>
                 </div>
 
-                {/* UV Index */}
+                 
                 <div className="mt-4 p-3 bg-muted/50 rounded-lg">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium">UV Index</span>
@@ -304,7 +304,7 @@ export default function WeatherPage() {
           </CardContent>
         </Card>
 
-        {/* Tabs for Forecast and Farming Advice */}
+         
         <Tabs defaultValue="forecast" className="space-y-4">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="forecast">6-Day Forecast</TabsTrigger>

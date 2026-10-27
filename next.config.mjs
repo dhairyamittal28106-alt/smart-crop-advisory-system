@@ -1,4 +1,4 @@
-/** @type {import('next').NextConfig} */
+ 
 const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
@@ -9,8 +9,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  // Configure for Replit environment
-  // Allow all hosts for Replit proxy
+  
+  
   async headers() {
     return [
       {

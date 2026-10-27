@@ -4,7 +4,7 @@ export type Tip = {
   content: string;
 };
 
-// This function simulates fetching daily tips from an API
+
 export async function fetchDailyTips(): Promise<Tip[]> {
   await new Promise(resolve => setTimeout(resolve, 1000));
   return [

@@ -46,7 +46,7 @@ export default function VoicePage() {
   const handleVoiceInput = (text: string) => {
     setVoiceHistory((prev) => [...prev, { text, timestamp: new Date(), language: currentLanguage }])
 
-    // Simulate AI response based on voice input
+    
     let response = ""
     const lowerText = text.toLowerCase()
 
@@ -91,7 +91,7 @@ export default function VoicePage() {
 
     setLastResponse(response)
 
-    // Speak the response
+    
     if (window.speechSynthesis) {
       const utterance = new SpeechSynthesisUtterance(response)
       const langCode =
@@ -135,7 +135,7 @@ export default function VoicePage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Voice Assistant Component */}
+           
           <div>
             <VoiceAssistant
               onVoiceInput={handleVoiceInput}
@@ -143,7 +143,7 @@ export default function VoicePage() {
               onLanguageChange={setCurrentLanguage}
             />
 
-            {/* Last Response */}
+             
             {lastResponse && (
               <Card className="mt-4 border-blue-200 bg-blue-50">
                 <CardHeader>
@@ -159,7 +159,7 @@ export default function VoicePage() {
             )}
           </div>
 
-          {/* Voice Commands Examples */}
+           
           <div>
             <Card>
               <CardHeader>
@@ -191,7 +191,7 @@ export default function VoicePage() {
           </div>
         </div>
 
-        {/* Voice History */}
+         
         {voiceHistory.length > 0 && (
           <Card className="mt-6">
             <CardHeader>

@@ -20,16 +20,16 @@ export default function CropAdvisoryDashboard() {
       try {
         const { data: { user } } = await supabase.auth.getUser()
         
-        // Show startup modal if user is not authenticated
+        
         if (!user) {
-          // Small delay to let the page load first
+          
           setTimeout(() => {
             setShowStartupModal(true)
           }, 1000)
         }
       } catch (error) {
         console.error('Error checking user:', error)
-        // Show modal on error as well (user likely not authenticated)
+        
         setTimeout(() => {
           setShowStartupModal(true)
         }, 1000)
@@ -74,7 +74,7 @@ export default function CropAdvisoryDashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {/* Crop Advisory */}
+           
           <Link href="/advisory">
             <Card className="card-supermoney cursor-pointer">
               <CardHeader>
@@ -93,7 +93,7 @@ export default function CropAdvisoryDashboard() {
             </Card>
           </Link>
 
-          {/* Weather Updates */}
+           
           <Link href="/weather">
             <Card className="card-supermoney cursor-pointer">
               <CardHeader>
@@ -112,7 +112,7 @@ export default function CropAdvisoryDashboard() {
             </Card>
           </Link>
 
-          {/* Market Prices */}
+           
           <Link href="/market">
             <Card className="card-supermoney cursor-pointer">
               <CardHeader>
@@ -131,7 +131,7 @@ export default function CropAdvisoryDashboard() {
             </Card>
           </Link>
 
-          {/* Pest Detection */}
+           
           <Link href="/pest-detection">
             <Card className="card-supermoney cursor-pointer">
               <CardHeader>
@@ -150,7 +150,7 @@ export default function CropAdvisoryDashboard() {
             </Card>
           </Link>
 
-          {/* Voice Assistant */}
+           
           <Link href="/voice">
             <Card className="card-supermoney cursor-pointer">
               <CardHeader>
@@ -169,7 +169,7 @@ export default function CropAdvisoryDashboard() {
             </Card>
           </Link>
 
-          {/* Quick Tips */}
+           
           <Link href="/quick-tips">
             <Card className="card-supermoney cursor-pointer">
               <CardHeader>

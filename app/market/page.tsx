@@ -187,7 +187,7 @@ export default function MarketPricePage() {
 
   const refreshPrices = async () => {
     setIsLoading(true)
-    // Simulate API call
+    
     setTimeout(() => {
       setIsLoading(false)
     }, 1500)
@@ -211,7 +211,7 @@ export default function MarketPricePage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+       
       <header className="border-b bg-card sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -240,7 +240,7 @@ export default function MarketPricePage() {
       </header>
 
       <div className="container mx-auto px-4 py-6">
-        {/* Search and Filters */}
+         
         <Card className="mb-6">
           <CardContent className="p-4">
             <div className="flex flex-col sm:flex-row gap-4">
@@ -285,7 +285,7 @@ export default function MarketPricePage() {
           </CardContent>
         </Card>
 
-        {/* Tabs for different views */}
+         
         <Tabs defaultValue="prices" className="space-y-4">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="prices">Current Prices</TabsTrigger>
@@ -293,7 +293,7 @@ export default function MarketPricePage() {
           </TabsList>
 
           <TabsContent value="prices">
-            {/* Market Prices Grid */}
+             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredData.map((item) => (
                 <Card key={item.id} className="hover:shadow-lg transition-shadow">
@@ -308,13 +308,13 @@ export default function MarketPricePage() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {/* Price */}
+                       
                       <div className="text-center">
                         <div className="text-2xl font-bold text-foreground">₹{item.price.toLocaleString()}</div>
                         <div className="text-sm text-muted-foreground">{item.unit}</div>
                       </div>
 
-                      {/* Price Change */}
+                       
                       <div className="flex items-center justify-center gap-2">
                         {item.change > 0 ? (
                           <div className="flex items-center gap-1 text-green-600">
@@ -331,12 +331,12 @@ export default function MarketPricePage() {
                         )}
                       </div>
 
-                      {/* Price Range */}
+                       
                       <div className="text-center text-xs text-muted-foreground">
                         Range: ₹{item.minPrice} - ₹{item.maxPrice}
                       </div>
 
-                      {/* Market Info */}
+                       
                       <div className="border-t pt-3">
                         <div className="flex items-center gap-1 text-sm text-muted-foreground mb-1">
                           <MapPin className="w-3 h-3" />
@@ -378,7 +378,7 @@ export default function MarketPricePage() {
 
           <TabsContent value="alerts">
             <div className="space-y-4">
-              {/* Create New Alert */}
+               
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">Create Price Alert</CardTitle>
@@ -416,7 +416,7 @@ export default function MarketPricePage() {
                 </CardContent>
               </Card>
 
-              {/* Active Alerts */}
+               
               <Card>
                 <CardHeader>
                   <CardTitle className="text-lg">Active Price Alerts</CardTitle>

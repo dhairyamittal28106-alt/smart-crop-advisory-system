@@ -30,7 +30,7 @@ export default function Header({ onLanguageSelect, showStartupModal = false, onS
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
 
-  // Check authentication status on component mount
+  
   useEffect(() => {
     const checkUser = async () => {
       const supabase = createClient()
@@ -40,7 +40,7 @@ export default function Header({ onLanguageSelect, showStartupModal = false, onS
         setUser(user)
 
         if (user) {
-          // Fetch user profile
+          
           const { data: profile } = await supabase
             .from('profiles')
             .select('*')
@@ -58,14 +58,14 @@ export default function Header({ onLanguageSelect, showStartupModal = false, onS
 
     checkUser()
 
-    // Listen for auth changes
+    
     const supabase = createClient()
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === 'SIGNED_IN' && session?.user) {
           setUser(session.user)
           
-          // Fetch profile after sign in
+          
           const { data: profile } = await supabase
             .from('profiles')
             .select('*')
@@ -128,7 +128,7 @@ export default function Header({ onLanguageSelect, showStartupModal = false, onS
       <header className="border-b sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            {/* Logo and App Name */}
+             
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
                 <span className="text-lg text-primary-foreground">🌱</span>
@@ -139,15 +139,15 @@ export default function Header({ onLanguageSelect, showStartupModal = false, onS
               </div>
             </div>
 
-            {/* Right Side Actions */}
+             
             <div className="flex items-center gap-3">
-              {/* Notifications */}
+               
               <Button variant="outline" size="sm">
                 <Bell className="h-4 w-4 mr-2" />
                 <span className="hidden sm:inline">Alerts</span>
               </Button>
 
-              {/* User Profile or Login */}
+               
               {isLoading ? (
                 <div className="w-8 h-8 bg-muted rounded-full animate-pulse" />
               ) : user ? (
@@ -211,7 +211,7 @@ export default function Header({ onLanguageSelect, showStartupModal = false, onS
         </div>
       </header>
 
-      {/* Authentication Modal */}
+       
       <AuthModal
         isOpen={isAuthModalOpen || showStartupModal}
         onClose={() => {

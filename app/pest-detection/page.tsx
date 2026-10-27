@@ -108,7 +108,7 @@ export default function PestDetectionPage() {
   }
 
   const handleCameraCapture = () => {
-    // In a real app, this would open the camera
+    
     fileInputRef.current?.click()
   }
 
@@ -117,7 +117,7 @@ export default function PestDetectionPage() {
 
     setIsAnalyzing(true)
 
-    // Add to history
+    
     const historyItem: AnalysisHistory = {
       id: Date.now().toString(),
       imageUrl: imagePreview!,
@@ -127,13 +127,13 @@ export default function PestDetectionPage() {
     }
     setAnalysisHistory((prev) => [historyItem, ...prev])
 
-    // Simulate AI analysis
+    
     setTimeout(() => {
       const result = mockDetectionResults[0]
       setAnalysisResult(result)
       setIsAnalyzing(false)
 
-      // Update history
+      
       setAnalysisHistory((prev) =>
         prev.map((item) => (item.id === historyItem.id ? { ...item, result, status: "completed" as const } : item)),
       )
@@ -164,7 +164,7 @@ export default function PestDetectionPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+       
       <header className="border-b bg-card sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-3">
@@ -187,7 +187,7 @@ export default function PestDetectionPage() {
       </header>
 
       <div className="container mx-auto px-4 py-6">
-        {/* Image Upload Section */}
+         
         <Card className="mb-6">
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
@@ -265,7 +265,7 @@ export default function PestDetectionPage() {
           </CardContent>
         </Card>
 
-        {/* Analysis Progress */}
+         
         {isAnalyzing && (
           <Card className="mb-6">
             <CardContent className="p-6">
@@ -281,7 +281,7 @@ export default function PestDetectionPage() {
           </Card>
         )}
 
-        {/* Analysis Results */}
+         
         {analysisResult && (
           <Card className="mb-6">
             <CardHeader>
@@ -297,7 +297,7 @@ export default function PestDetectionPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                {/* Detection Summary */}
+                 
                 <div className="bg-muted/50 rounded-lg p-4">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="font-semibold text-lg">{analysisResult.pestName}</h3>
@@ -309,7 +309,7 @@ export default function PestDetectionPage() {
                   <p className="text-sm">{analysisResult.description}</p>
                 </div>
 
-                {/* Symptoms */}
+                 
                 <div>
                   <h4 className="font-medium mb-3 flex items-center gap-2">
                     <AlertTriangle className="w-4 h-4 text-orange-500" />
@@ -325,7 +325,7 @@ export default function PestDetectionPage() {
                   </div>
                 </div>
 
-                {/* Treatment Options */}
+                 
                 <Tabs defaultValue="organic" className="space-y-4">
                   <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="organic">Organic</TabsTrigger>
@@ -406,7 +406,7 @@ export default function PestDetectionPage() {
                   </TabsContent>
                 </Tabs>
 
-                {/* Additional Information */}
+                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Card>
                     <CardHeader className="pb-3">
@@ -437,7 +437,7 @@ export default function PestDetectionPage() {
           </Card>
         )}
 
-        {/* Analysis History */}
+         
         {analysisHistory.length > 0 && (
           <Card>
             <CardHeader>

@@ -60,7 +60,7 @@ export function VoiceAssistant({ onVoiceInput, currentLanguage = "english", onLa
   }, [onLanguageChange])
 
   useEffect(() => {
-    // Check if speech recognition is supported
+    
     if (typeof window !== "undefined") {
       const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition
       const speechSynthesis = window.speechSynthesis
@@ -70,7 +70,7 @@ export function VoiceAssistant({ onVoiceInput, currentLanguage = "english", onLa
         recognitionRef.current = new SpeechRecognition()
         synthRef.current = speechSynthesis
 
-        // Configure speech recognition
+        
         recognitionRef.current.continuous = false
         recognitionRef.current.interimResults = true
         recognitionRef.current.lang = languages[userLanguage as keyof typeof languages]?.code || "en-US"
@@ -126,7 +126,7 @@ export function VoiceAssistant({ onVoiceInput, currentLanguage = "english", onLa
 
   const speak = (text: string) => {
     if (synthRef.current && !isSpeaking) {
-      // Cancel any ongoing speech
+      
       synthRef.current.cancel()
 
       const utterance = new SpeechSynthesisUtterance(text)

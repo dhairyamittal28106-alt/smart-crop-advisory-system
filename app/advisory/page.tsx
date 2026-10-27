@@ -75,7 +75,7 @@ export default function CropAdvisoryChat() {
     setInputMessage("")
     setIsLoading(true)
 
-    // Simulate AI response (replace with actual AI integration)
+    
     setTimeout(() => {
       const botResponse = generateBotResponse(message)
       const botMessage: Message = {
@@ -121,12 +121,12 @@ export default function CropAdvisoryChat() {
 
   const toggleVoiceInput = () => {
     setIsListening(!isListening)
-    // Voice input functionality would be implemented here
+    
   }
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+       
       <header className="border-b bg-card sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center gap-3">
@@ -148,7 +148,7 @@ export default function CropAdvisoryChat() {
         </div>
       </header>
 
-      {/* Context Info */}
+       
       <div className="border-b bg-muted/30">
         <div className="container mx-auto px-4 py-3">
           <div className="flex flex-wrap items-center gap-4 text-sm">
@@ -168,7 +168,7 @@ export default function CropAdvisoryChat() {
         </div>
       </div>
 
-      {/* Chat Messages */}
+       
       <div className="flex-1 container mx-auto px-4 py-4 pb-32">
         <ScrollArea className="h-[calc(100vh-280px)]" ref={scrollAreaRef}>
           <div className="space-y-4">
@@ -223,7 +223,7 @@ export default function CropAdvisoryChat() {
           </div>
         </ScrollArea>
 
-        {/* Quick Questions */}
+         
         {messages.length === 1 && (
           <div className="mt-6">
             <h3 className="text-sm font-medium text-muted-foreground mb-3">Quick Questions:</h3>
@@ -244,7 +244,7 @@ export default function CropAdvisoryChat() {
         )}
       </div>
 
-      {/* Input Area */}
+       
       <div className="fixed bottom-0 left-0 right-0 bg-background border-t">
         <div className="container mx-auto px-4 py-4">
           <div className="flex gap-2">
